@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Etharaai Test</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: white; }
+    #log { white-space: pre-wrap; font-family: monospace; background: #f5f5f5; padding: 20px; border-radius: 8px; margin-top: 20px; }
+    button { padding: 10px 20px; margin: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Etharaai Debug Test</h1>
+  <button onclick="testAll()">Test All Modules</button>
+  <button onclick="testLogin()">Test Login API</button>
+  <button onclick="testAppInit()">Test App Init</button>
+  <div id="log"></div>
+
+  <script>
+    function log(msg) {
+      document.getElementById('log').textContent += new Date().toLocaleTimeString() + ': ' + msg + '\\n';
+    }
+
+    async function testLogin() {
+      log('Testing login API...');
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({email: 'test@test.com', password: '123456'})
+        });
+        const data = await res.json();
+        log('Login response: ' + JSON.stringify(data));
+      } catch (e) {
+        log('Login error: ' + e.message);
+      }
+    }
+
+    async function testAppInit() {
+      log('Testing App init...');
+      try {
+        if (typeof App === 'undefined') log('App undefined');
+        else {
+          App.init();
+          log('App.init() called successfully');
+        }
+      } catch (e) {
+        log('App.init error: ' + e.message);
+      }
+    }
+
+    async function testAll() {
+      log('=== Etharaai Full Test ===');
+      log('1. Checking modules...');
+      log('API: ' + (typeof API !== 'undefined' ? 'OK' : 'MISSING'));
+      log('Utils: ' + (typeof Utils !== 'undefined' ? 'OK' : 'MISSING'));
+      log('Auth: ' + (typeof Auth !== 'undefined' ? 'OK' : 'MISSING'));
+      log('App: ' + (typeof App !== 'undefined' ? 'OK' : 'MISSING'));
+      
+      log('2. DOM elements...');
+      log('app div: ' + !!document.getElementById('app'));
+      log('modal container: ' + !!document.getElementById('modal-container'));
+      
+      log('3. CSS loaded: ' + (getComputedStyle(document.body).backgroundColor !== ''));
+      
+      testLogin();
+      testAppInit();
+    }
+  </script>
+</body>
+</html>
+
